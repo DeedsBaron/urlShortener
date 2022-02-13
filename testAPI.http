@@ -1,0 +1,9 @@
+POST http://localhost:8080/post
+Content-Type: application/json
+
+{
+  "url":"https://vk.com/letsffucktheworld"
+}
+
+###
+
