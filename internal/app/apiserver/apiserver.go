@@ -1,6 +1,7 @@
 package apiserver
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
@@ -10,16 +11,18 @@ import (
 )
 
 type APIServer struct {
-	config *Config
-	logger *logrus.Logger
-	router *mux.Router
+	config  *Config
+	logger  *logrus.Logger
+	router  *mux.Router
+	storage store.Storage
 }
 
 func New(config *Config) *APIServer {
 	return &APIServer{
-		config: config,
-		logger: logrus.New(),
-		router: mux.NewRouter(),
+		config:  config,
+		logger:  logrus.New(),
+		router:  mux.NewRouter(),
+		storage: store.InitStorage(),
 	}
 }
 
@@ -54,11 +57,34 @@ func (s *APIServer) handleHello() http.HandlerFunc {
 	}
 }
 
+type request struct {
+	url *string `json:"url"`
+}
+
 func (s *APIServer) createURL() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		longURL := r.FormValue("url")
-		store.Store[longURL] = "SUKA"
-		fmt.Println(store.Store)
-		io.WriteString(w, "POST SUCCESS")
+		t := struct {
+			Url *string `json:"url"` // pointer so we can test for field absence
+		}{}
+		d := json.NewDecoder(r.Body)
+		//d.DisallowUnknownFields()
+		err := d.Decode(&t)
+		if err != nil {
+			// bad JSON or unrecognized json field
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		if t.Url == nil {
+			http.Error(w, "missing field 'test' from JSON object", http.StatusBadRequest)
+			return
+		}
+		if d.More() {
+			http.Error(w, "extraneous data after JSON object", http.StatusBadRequest)
+			return
+		}
+		fmt.Println("long url=", *t.Url)
+		resp := s.storage.PostStore(*t.Url, s.config.Options.Schema, s.config.Options.Prefix)
+		//makeShortUrl()
+		io.WriteString(w, s.config.Options.Schema+s.config.Options.Prefix+resp)
 	}
 }
