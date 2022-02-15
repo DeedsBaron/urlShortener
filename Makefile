@@ -1,5 +1,8 @@
 .PHONY: build
 build:
-	go build -v ./urlShortener/cmd/urlShortener
+	go build -o urlShortener/urlShortener -v ./urlShortener/cmd/urlShortener/main.go
+
+image:
+	docker build -t urlshortener:1.0 .
 
 .DEFAULT_GOAL := build

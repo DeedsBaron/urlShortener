@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"log"
 	"net/url"
-	"shortener/internal/app/encoder"
-	"shortener/internal/app/randgen"
+	"shortener/urlShortener/internal/app/encoder"
+	"shortener/urlShortener/internal/app/randgen"
 )
 
 var (

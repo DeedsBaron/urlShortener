@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
-	"shortener/internal/app/apiserver"
+	"shortener/urlShortener/internal/app/apiserver"
 )
 
 func main() {

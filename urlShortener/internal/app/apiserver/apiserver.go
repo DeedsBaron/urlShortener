@@ -6,7 +6,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"io"
 	"net/http"
-	"shortener/internal/app/store"
+	"shortener/urlShortener/internal/app/store"
 )
 
 type APIServer struct {
