@@ -1,5 +1,5 @@
 FROM postgres
 
-COPY ./urlShortener/urlShortener ./
+COPY ./urlShortener/init.sh ./
 
-CMD bash ./urlShortener
+CMD bash ./init.sh
