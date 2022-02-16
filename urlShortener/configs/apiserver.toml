@@ -3,3 +3,9 @@ log_level = "debug"
 [options]
     schema = "http"
     prefix = "localhost:8080"
+[storage]
+    host = "localhost"
+    port = "5432"
+    database = "urlshortener"
+    username = "DeedsBaron"
+    password = "0809"

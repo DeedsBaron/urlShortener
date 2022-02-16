@@ -1,17 +1,26 @@
-.PHONY: build
 build:
+	@echo "\033[0;32mBuilding binary...\033[m"
 	go build -o urlShortener/urlShortener -v ./urlShortener/cmd/urlShortener/main.go
 
-image: build
-	docker build -t test .
-run: image
-	docker run -dit --name sql -p 5432:5432 test
+dir4db:
+	@echo "\033[0;32mCreating folder for database volume at $${HOME}/db-data...\033[m"
+	@if [ ! -d "$${HOME}/db-data" ]; then mkdir $${HOME}/db-data; fi
+
+run: dir4db
+	docker-compose up -d --force-recreate
+logs:
+	docker-compose logs
 
 clean:
-	docker stop $$(docker ps -a -q)
-	docker system prune -a
-exec:
-	docker exec -it sql bash
+	docker-compose down
+	docker volume rm $$(docker volume ls -q)
+	docker rmi -f $$(docker images -aq)
 
+exec:
+	docker exec -it postgresql bash
+status:
+	docker ps -a
+
+.PHONY: all lib clean fclean re
 
 .DEFAULT_GOAL := build

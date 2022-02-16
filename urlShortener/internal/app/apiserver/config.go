@@ -17,6 +17,8 @@ type Config struct {
 		Schema string `toml:"schema"`
 		Prefix string `toml:"prefix"`
 	} `toml:"options"`
+	Storage struct {
+	}
 }
 
 func NewConfig() (*Config, error) {
