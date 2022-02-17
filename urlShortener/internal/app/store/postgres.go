@@ -1,6 +1,7 @@
 package store
 
 import (
+<<<<<<< HEAD
 	"context"
 	"github.com/jackc/pgconn"
 	"github.com/jackc/pgx/v4"
@@ -27,3 +28,11 @@ type Client interface {
 //	}
 //
 //}
+=======
+	"shortener/pkg/postgresql"
+)
+
+type postgres struct {
+	client postgresql.Client
+}
+>>>>>>> ed8f4a1 (postgresql container is configured and working)

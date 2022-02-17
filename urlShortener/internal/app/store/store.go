@@ -6,8 +6,13 @@ import (
 	"fmt"
 	"log"
 	"net/url"
+<<<<<<< HEAD
 	"shortener/urlShortener/internal/app/encoder"
 	"shortener/urlShortener/internal/app/randgen"
+=======
+	"shortener/internal/app/encoder"
+	"shortener/internal/app/randgen"
+>>>>>>> ed8f4a1 (postgresql container is configured and working)
 )
 
 var (

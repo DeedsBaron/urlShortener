@@ -1,7 +1,10 @@
 package encoder
 
 import (
+<<<<<<< HEAD
 	"errors"
+=======
+>>>>>>> ed8f4a1 (postgresql container is configured and working)
 	"strings"
 )
 
@@ -17,6 +20,7 @@ func Encode(number uint64) string {
 	for ; number > 0; number = number / length {
 		encodedBuilder.WriteByte(alphabet[(number % length)])
 	}
+<<<<<<< HEAD
 
 	return encodedBuilder.String()
 }
@@ -44,4 +48,8 @@ func IntPow(n, m uint64) uint64 {
 		result *= n
 	}
 	return result
+=======
+	str := encodedBuilder.String()
+	return str[:len(str)-1]
+>>>>>>> ed8f4a1 (postgresql container is configured and working)
 }
