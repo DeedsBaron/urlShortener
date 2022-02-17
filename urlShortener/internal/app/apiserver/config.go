@@ -22,11 +22,7 @@ type Config struct {
 }
 
 func NewConfig() (*Config, error) {
-<<<<<<< HEAD
-	flag.StringVar(&configPath, "config-path", "urlShortener/configs/apiserver.toml", "path to config file")
-=======
 	flag.StringVar(&configPath, "config-path", "configs/apiserver.toml", "path to config file")
->>>>>>> ed8f4a1 (postgresql container is configured and working)
 	config := &Config{}
 	_, err := toml.DecodeFile(configPath, config)
 	if err != nil {

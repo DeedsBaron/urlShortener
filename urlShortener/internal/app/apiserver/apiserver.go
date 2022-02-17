@@ -6,11 +6,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"io"
 	"net/http"
-<<<<<<< HEAD
-	"shortener/urlShortener/internal/app/store"
-=======
 	"shortener/internal/app/store"
->>>>>>> ed8f4a1 (postgresql container is configured and working)
 )
 
 type APIServer struct {
