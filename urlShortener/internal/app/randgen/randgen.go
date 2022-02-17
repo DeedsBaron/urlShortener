@@ -2,6 +2,7 @@ package randgen
 
 import (
 	"math/rand"
+	"strconv"
 	"time"
 )
 
@@ -11,7 +12,14 @@ const (
 )
 
 func Generate() uint64 {
-	x1 := rand.NewSource(time.Now().UnixNano())
-	y1 := rand.New(x1)
-	return y1.Uint64()
+	for {
+		x1 := rand.NewSource(time.Now().UnixNano())
+		y1 := rand.New(x1)
+		res := y1.Uint64()
+		if len(strconv.FormatUint(res, 10)) < 20 {
+			continue
+		} else {
+			return res
+		}
+	}
 }

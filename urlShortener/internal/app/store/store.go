@@ -1,6 +1,7 @@
 package store
 
 import (
+	"context"
 	"errors"
 	"flag"
 	"fmt"
@@ -15,8 +16,8 @@ var (
 )
 
 type Storage interface {
-	PostStore(string, string, string) (string, error)
-	FindInStore(string, string, string) (string, error)
+	PostStore(context.Context, string, string, string) (string, error)
+	FindInStore(context.Context, string, string, string) (string, error)
 }
 
 type InMemStorage struct {
@@ -47,7 +48,7 @@ func validateURL(longURL string) error {
 	return nil
 }
 
-func (st *InMemStorage) FindInStore(shortURL, schema, prefix string) (string, error) {
+func (st *InMemStorage) FindInStore(ctx context.Context, shortURL, schema, prefix string) (string, error) {
 	for _, val := range st.InMemStore {
 		if val[1] == schema+"://"+prefix+"/"+shortURL {
 			return val[0], nil
@@ -56,7 +57,7 @@ func (st *InMemStorage) FindInStore(shortURL, schema, prefix string) (string, er
 	return "", errors.New("Short URL doesn't exist")
 }
 
-func (st *InMemStorage) PostStore(s string, schema string, prefix string) (string, error) {
+func (st *InMemStorage) PostStore(ctx context.Context, s string, schema string, prefix string) (string, error) {
 	if checkIfLongURLAlreadyInMap(st.InMemStore, s) == true {
 		return "", errors.New("URL is already in base")
 	}

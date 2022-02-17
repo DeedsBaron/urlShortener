@@ -6,6 +6,6 @@ log_level = "debug"
 [storage]
     host = "localhost"
     port = "5432"
-    database = "urlshortener"
-    username = "DeedsBaron"
+    database = "urlshort"
+    username = "deedsbaron"
     password = "0809"

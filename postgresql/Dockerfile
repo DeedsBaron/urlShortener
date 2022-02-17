@@ -9,3 +9,4 @@ ENV POSTGRES_USER=${POSTGRES_USER}
 ENV POSTGRES_DB=${POSTGRES_DB}
 
 COPY init.sql /docker-entrypoint-initdb.d/
+

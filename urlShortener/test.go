@@ -4,12 +4,13 @@ import (
 	"context"
 	"fmt"
 	"github.com/jackc/pgx/v4"
+	"math/rand"
 	"os"
-	"shortener/internal/app/encoder"
-	"shortener/internal/app/randgen"
+	"time"
 )
 
 func main() {
+	rand.Seed(time.Now().UnixNano())
 	// urlExample := "postgres://username:password@localhost:5432/database_name"
 	conn, err := pgx.Connect(context.Background(), "postgres://deedsbaron:0809@localhost:5432/urlshort")
 	if err != nil {
@@ -17,9 +18,6 @@ func main() {
 		os.Exit(1)
 	}
 	defer conn.Close(context.Background())
-
-	id := randgen.Generate()
-	str := encoder.Encode(id)
 	fmt.Println("id = ", id)
 	fmt.Println("Str = ", str)
 

@@ -12,13 +12,17 @@ run: dir4db
 	docker-compose up -d --force-recreate
 logs:
 	docker-compose logs
+vol :
 
 clean:
 	docker-compose down
 	docker volume rm $$(docker volume ls -q)
-	docker rmi -f $$(docker images -aq)
+	rm -rf $${HOME}/db-data
 exec:
 	docker exec -it postgresql bash
+url:
+	docker exec -it urlshortener bash
+
 status:
 	docker ps -a
 test:

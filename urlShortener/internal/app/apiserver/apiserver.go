@@ -1,6 +1,7 @@
 package apiserver
 
 import (
+	"context"
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
@@ -52,7 +53,7 @@ func (s *APIServer) getFullURL() http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		shortURL := mux.Vars(r)["shortURL"]
-		resp, err := s.storage.FindInStore(shortURL, s.config.Options.Schema, s.config.Options.Prefix)
+		resp, err := s.storage.FindInStore(context.Background(), shortURL, s.config.Options.Schema, s.config.Options.Prefix)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusNotFound)
 			return
@@ -89,7 +90,7 @@ func (s *APIServer) createURL() http.HandlerFunc {
 			s.logger.Error("Extraneous data after JSON object")
 			return
 		}
-		resp, err := s.storage.PostStore(*t.LongUrl, s.config.Options.Schema, s.config.Options.Prefix)
+		resp, err := s.storage.PostStore(context.Background(), *t.LongUrl, s.config.Options.Schema, s.config.Options.Prefix)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			s.logger.Error(err.Error())

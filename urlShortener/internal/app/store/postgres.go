@@ -2,8 +2,12 @@ package store
 
 import (
 	"context"
+	"fmt"
 	"github.com/jackc/pgconn"
 	"github.com/jackc/pgx/v4"
+	"log"
+	"shortener/pkg/utils"
+	"time"
 )
 
 type Client interface {
@@ -15,15 +19,34 @@ type Client interface {
 	BeginTxFunc(ctx context.Context, txOptions pgx.TxOptions, f func(pgx.Tx) error) error
 }
 
-//func NewClient(ctx context.Context, username, password, host, port, database string) {
-//	//dsn := fmt.Sprintf("postgresql://%s:%s@%s:%s/%s", username, password, host, port, database)
-//		ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
-//		defer cancel()
-//		//pool, err := pgxpool.Connect(ctx, dsn)
-//		//if err != nil {
-//		//	fmt.Println("failed to coonect to postrgersql")
-//		//	return
-//		//}
-//	}
-//
-//}
+type Postgres struct {
+	conn *pgx.Conn
+}
+
+func (st *Postgres) FindInStore(ctx context.Context, shortURL, schema, prefix string) (string, error) {
+	return "", nil
+}
+
+func (st *Postgres) PostStore(ctx context.Context, s string, schema string, prefix string) (string, error) {
+	return "", nil
+}
+
+func InitPostgres(ctx context.Context, maxAttempts int, username, password, host, port, database string) (error, *pgx.Conn) {
+	dsn := fmt.Sprintf("postgresql://%s:%s@%s:%s/%s", username, password, host, port, database)
+	var conn *pgx.Conn
+	err := utils.DoWithTries(func() error {
+		ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+		defer cancel()
+
+		var err error
+		conn, err = pgx.Connect(ctx, dsn)
+		if err != nil {
+			return err
+		}
+		return nil
+	}, maxAttempts, 5*time.Second)
+	if err != nil {
+		log.Fatal("error do with tries postgresql")
+	}
+	return nil, conn
+}
