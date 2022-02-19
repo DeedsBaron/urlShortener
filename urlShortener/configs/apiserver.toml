@@ -9,3 +9,4 @@ log_level = "debug"
     database = "urlshort"
     username = "deedsbaron"
     password = "0809"
+    attempts2con = 5

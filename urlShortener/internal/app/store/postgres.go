@@ -2,51 +2,100 @@ package store
 
 import (
 	"context"
+	"errors"
 	"fmt"
-	"github.com/jackc/pgconn"
-	"github.com/jackc/pgx/v4"
-	"log"
+	"github.com/jackc/pgx/v4/pgxpool"
+	"github.com/sirupsen/logrus"
+	"shortener/internal/app/config"
+	"shortener/internal/app/encoder"
+	"shortener/internal/app/randgen"
 	"shortener/pkg/utils"
+	"strings"
 	"time"
 )
 
-type Client interface {
-	Exec(ctx context.Context, sql string, arguments ...interface{}) (pgconn.CommandTag, error)
-	Query(ctx context.Context, sql string, args ...interface{}) (pgx.Rows, error)
-	QueryRow(ctx context.Context, sql string, arguments ...interface{}) pgx.Row
-	Begin(ctx context.Context) (pgx.Tx, error)
-	BeginTx(ctx context.Context, txOptions pgx.TxOptions) (pgx.Tx, error)
-	BeginTxFunc(ctx context.Context, txOptions pgx.TxOptions, f func(pgx.Tx) error) error
-}
-
 type Postgres struct {
-	conn *pgx.Conn
+	pool *pgxpool.Pool
 }
 
-func (st *Postgres) FindInStore(ctx context.Context, shortURL, schema, prefix string) (string, error) {
-	return "", nil
+func (st *Postgres) FindInStore(ctx context.Context, shortURL string, config *config.Config) (string, error) {
+	var longURL string
+	q := `SELECT 
+				longurl
+		  FROM 
+				urls
+          WHERE 
+				shortURL = $1;`
+	row := st.pool.QueryRow(context.Background(), q, config.Options.Schema+"://"+config.Options.Prefix+"/"+shortURL)
+	err := row.Scan(&longURL)
+	if err != nil {
+		return "", nil
+	}
+	return longURL, nil
 }
 
-func (st *Postgres) PostStore(ctx context.Context, s string, schema string, prefix string) (string, error) {
-	return "", nil
+type Row struct {
+	id       uint64
+	longURL  string
+	shortURL string
 }
 
-func InitPostgres(ctx context.Context, maxAttempts int, username, password, host, port, database string) (error, *pgx.Conn) {
-	dsn := fmt.Sprintf("postgresql://%s:%s@%s:%s/%s", username, password, host, port, database)
-	var conn *pgx.Conn
+func (st *Postgres) PostStore(ctx context.Context, longURL string, config *config.Config) (shortURL string, err error) {
+	if err := validateURL(longURL); err != nil {
+		return "", err
+	}
+	q := `INSERT INTO urls (id, longURL, shortURL) VALUES ($1, $2, $3);`
+	for {
+		id := randgen.Generate()
+		shortURL = config.Options.Schema + "://" + config.Options.Prefix + "/" + encoder.Encode(id)
+		_, err := st.pool.Exec(context.Background(), q, id, longURL, shortURL)
+		if err != nil {
+			fmt.Println(err.Error())
+			if strings.Contains(err.Error(), "urls_longurl_key") == true {
+				return "", errors.New("URL is already in base")
+			} else if strings.Contains(err.Error(), "urls_pkey") == true {
+				fmt.Println("Here")
+				continue
+			} else {
+				return "", err
+			}
+		} else {
+			return shortURL, nil
+		}
+	}
+}
+
+func NewPostgres(config *config.Config) (*Postgres, error) {
+	postgres := new(Postgres)
+	err, pool := NewClient(context.Background(), config)
+	if err != nil {
+		return nil, err
+	}
+	postgres.pool = pool
+	return postgres, nil
+}
+
+func NewClient(ctx context.Context, config *config.Config) (error, *pgxpool.Pool) {
+	dsn := fmt.Sprintf("postgresql://%s:%s@%s:%s/%s",
+		config.Storage.Username,
+		config.Storage.Password,
+		config.Storage.Host,
+		config.Storage.Port,
+		config.Storage.Database)
+	var pool *pgxpool.Pool
+
 	err := utils.DoWithTries(func() error {
 		ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 		defer cancel()
-
 		var err error
-		conn, err = pgx.Connect(ctx, dsn)
+		pool, err = pgxpool.Connect(ctx, dsn)
 		if err != nil {
 			return err
 		}
 		return nil
-	}, maxAttempts, 5*time.Second)
+	}, config.Storage.Attempts, 5*time.Second)
 	if err != nil {
-		log.Fatal("error do with tries postgresql")
+		logrus.Fatal(err.Error())
 	}
-	return nil, conn
+	return nil, pool
 }

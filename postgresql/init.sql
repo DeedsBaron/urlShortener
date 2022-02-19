@@ -1,5 +1,7 @@
+CREATE DATABASE urlshort;
+\c urlshort;
 CREATE TABLE urls (
     id NUMERIC PRIMARY KEY,
-    longURL VARCHAR (50) UNIQUE NOT NULL,
-    shortURL VARCHAR (50) NOT NULL
+    longurl TEXT UNIQUE NOT NULL,
+    shorturl TEXT NOT NULL
 );

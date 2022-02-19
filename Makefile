@@ -4,12 +4,18 @@ build:
 
 all: build
 	@$(MAKE) run -s -C urlShortener
+inmem:
+	export SOLUTION=0
+	docker-compose up -d --build
+
+
+
 dir4db:
 	@echo "\033[0;32mCreating folder for database volume at $${HOME}/db-data...\033[m"
 	@if [ ! -d "$${HOME}/db-data" ]; then mkdir $${HOME}/db-data; fi
 
 run: dir4db
-	docker-compose up -d --force-recreate
+	docker-compose up -d --build
 logs:
 	docker-compose logs
 vol :
@@ -17,7 +23,6 @@ vol :
 clean:
 	docker-compose down
 	docker volume rm $$(docker volume ls -q)
-	rm -rf $${HOME}/db-data
 exec:
 	docker exec -it postgresql bash
 url:
@@ -31,4 +36,4 @@ conn:
 	psql -h localhost -p 5432 -U deedsbaron urlshort
 .PHONY: all lib clean fclean re
 
-#.DEFAULT_GOAL := build
+.DEFAULT_GOAL := all

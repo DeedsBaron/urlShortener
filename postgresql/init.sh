@@ -13,3 +13,7 @@ CREATE TABLE urls (
 );
 INSERT INTO urls (id, longURL, shortURL) VALUES (1238129389123, 'asdsadasd', '666666');
 INSERT INTO urls(id, longURL, shortURL)
+
+SELECT longurl, shorturl
+FROM urls
+WHERE shortURL = 'http://localhost:8080/_h2kndDy6J';

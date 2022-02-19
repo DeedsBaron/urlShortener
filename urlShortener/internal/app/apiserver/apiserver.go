@@ -7,22 +7,23 @@ import (
 	"github.com/sirupsen/logrus"
 	"io"
 	"net/http"
+	"shortener/internal/app/config"
 	"shortener/internal/app/store"
 )
 
 type APIServer struct {
-	config  *Config
+	config  *config.Config
 	logger  *logrus.Logger
 	router  *mux.Router
 	storage store.Storage
 }
 
-func New(config *Config) *APIServer {
+func New(config *config.Config) *APIServer {
 	return &APIServer{
 		config:  config,
 		logger:  logrus.New(),
 		router:  mux.NewRouter(),
-		storage: store.InitStorage(),
+		storage: store.InitStorage(config),
 	}
 }
 
@@ -53,9 +54,10 @@ func (s *APIServer) getFullURL() http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		shortURL := mux.Vars(r)["shortURL"]
-		resp, err := s.storage.FindInStore(context.Background(), shortURL, s.config.Options.Schema, s.config.Options.Prefix)
+		resp, err := s.storage.FindInStore(context.Background(), shortURL, s.config)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusNotFound)
+			s.logger.Info(err.Error())
 			return
 		}
 		http.Redirect(w, r, resp, http.StatusSeeOther)
@@ -90,7 +92,7 @@ func (s *APIServer) createURL() http.HandlerFunc {
 			s.logger.Error("Extraneous data after JSON object")
 			return
 		}
-		resp, err := s.storage.PostStore(context.Background(), *t.LongUrl, s.config.Options.Schema, s.config.Options.Prefix)
+		resp, err := s.storage.PostStore(context.Background(), *t.LongUrl, s.config)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			s.logger.Error(err.Error())

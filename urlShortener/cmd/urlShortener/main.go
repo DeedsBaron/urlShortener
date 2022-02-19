@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"log"
 	"shortener/internal/app/apiserver"
+	"shortener/internal/app/config"
 )
 
 func main() {
-	config, err1 := apiserver.NewConfig()
+	config, err1 := config.NewConfig()
 	if err1 != nil {
 		return
 	}

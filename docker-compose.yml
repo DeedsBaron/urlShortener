@@ -19,21 +19,19 @@ services:
     ports:
       - "5432:5432"
 
-#  urlshortener:
-#    container_name: urlshortener
-#    depends_on:
-#      - postgresql
-#    build: ./urlShortener
-#    image: urlshortener
-#    restart: always
-#    ports:
-#      - "8080:${URLSH_PORT}"
+  urlshortener:
+    container_name: urlshortener
+    depends_on:
+      - postgresql
+    build:
+      context: ./urlShortener/
+      args:
+        SOLUTION: ${SOLUTION}
+    image: urlshortener
+    restart: always
+    ports:
+      - "8080:${URLSH_PORT}"
 
 volumes:
   db-data:
-    driver: local
-    driver_opts:
-      type: none
-      device: ${HOME}/db-data
-      o: bind
     name: db-data
