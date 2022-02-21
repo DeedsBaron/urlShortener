@@ -4,7 +4,7 @@ log_level = "debug"
     schema = "http"
     prefix = "localhost:8080"
 [storage]
-    host = "localhost"
+    host = "postgresql"
     port = "5432"
     database = "urlshort"
     username = "deedsbaron"

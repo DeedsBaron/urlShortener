@@ -5,10 +5,18 @@ build:
 all: build
 	@$(MAKE) run -s -C urlShortener
 inmem:
-	export SOLUTION=0
-	docker-compose up -d --build
+	sed -i -e 's/SOLUTION=0/SOLUTION=0/g' .env
+	sed -i -e 's/SOLUTION=1/SOLUTION=0/g' .env
+	docker-compose build --no-cache
+	docker-compose up -d --force-recreate
+psql:
+	sed -i -e 's/SOLUTION=0/SOLUTION=1/g' .env
+	sed -i -e 's/SOLUTION=1/SOLUTION=1/g' .env
+	docker-compose build --no-cache
+	docker-compose up -d --force-recreate
 
-
+run_inmem:
+	@$(MAKE) run_inmem -s -C urlShortener
 
 dir4db:
 	@echo "\033[0;32mCreating folder for database volume at $${HOME}/db-data...\033[m"
@@ -24,7 +32,7 @@ clean:
 	docker-compose down
 	docker volume rm $$(docker volume ls -q)
 exec:
-	docker exec -it postgresql bash
+	docker exec -it urlshortener bash
 url:
 	docker exec -it urlshortener bash
 

@@ -74,7 +74,6 @@ func (st *InMemStorage) PostStore(ctx context.Context, longURL string, config *c
 			break
 		}
 	}
-	fmt.Println("map = ", st.InMemStore)
 	return st.InMemStore[rand][1], nil
 }
 
@@ -84,7 +83,6 @@ func InitStorage(config *config.Config) Storage {
 	var err error
 	var newStorage Storage
 	if Memsol == "inmem" {
-		fmt.Println("inmem sol")
 		newStorage = NewInMemStorage()
 	} else if Memsol == "psql" {
 		newStorage, err = NewPostgres(config)

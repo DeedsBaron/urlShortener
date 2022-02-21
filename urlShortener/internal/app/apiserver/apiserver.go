@@ -46,11 +46,11 @@ func (s *APIServer) configureLogger() error {
 }
 
 func (s *APIServer) configureRouter() {
-	s.router.HandleFunc("/encode/", s.createURL()).Methods("POST")
-	s.router.HandleFunc("/{shortURL}", s.getFullURL()).Methods("GET")
+	s.router.HandleFunc("/encode/", s.CreateURL()).Methods("POST")
+	s.router.HandleFunc("/{shortURL}", s.GetFullURL()).Methods("GET")
 }
 
-func (s *APIServer) getFullURL() http.HandlerFunc {
+func (s *APIServer) GetFullURL() http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		shortURL := mux.Vars(r)["shortURL"]
@@ -61,7 +61,7 @@ func (s *APIServer) getFullURL() http.HandlerFunc {
 			return
 		}
 		http.Redirect(w, r, resp, http.StatusSeeOther)
-		s.logger.Info("GET method SUCCESS")
+		s.logger.Debug("GET method SUCCESS")
 	}
 }
 
@@ -69,7 +69,7 @@ type request struct {
 	url *string `json:"url"`
 }
 
-func (s *APIServer) createURL() http.HandlerFunc {
+func (s *APIServer) CreateURL() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		t := struct {
 			LongUrl *string `json:"longurl"` // pointer so we can test for field absence
@@ -99,6 +99,6 @@ func (s *APIServer) createURL() http.HandlerFunc {
 			return
 		}
 		io.WriteString(w, resp)
-		s.logger.Info("POST method SUCCESS")
+		s.logger.Debug("POST method SUCCESS")
 	}
 }

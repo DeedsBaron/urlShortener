@@ -1,6 +1,9 @@
 #!/bin/bash
 if [[ $SOLUTION == 0 ]]; then
-  ./urlshortener
-elif [[ "$some_variable" == "ok input" ]]; then
- ./urlshortener -mem psql
+  ./urlShortener
+elif [[ $SOLUTION == 1 ]]; then
+  ./urlShortener -mem psql
 fi
+while :
+do
+done
