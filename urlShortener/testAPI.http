@@ -26,4 +26,9 @@ Content-Type: application/json
   "longUrl":"https://www.google.com/search?q=how+to+form+correct+response+post+method&oq=how+to+form+correct+response+post+method&aqs=chrome..69i57.10120j0j4&sourceid=chrome&ie=UTF-8"
 }
 ###
+POST http://localhost:8080/encode/
+Content-Type: application/json
 
+{
+  "longUrl":"asdasdasdsgddfsgdfgdfgdfg234432423423"
+}

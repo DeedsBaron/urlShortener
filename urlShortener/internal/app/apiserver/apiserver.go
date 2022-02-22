@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"shortener/internal/app/config"
 	"shortener/internal/app/store"
+	"shortener/pkg/utils"
 )
 
 type APIServer struct {
@@ -32,7 +33,7 @@ func (s *APIServer) Start() error {
 		return err
 	}
 	s.configureRouter()
-	s.logger.Info("Starting api server")
+	s.logger.Info("Starting API server")
 	return http.ListenAndServe(s.config.BindAddr, s.router)
 }
 
@@ -56,7 +57,7 @@ func (s *APIServer) GetFullURL() http.HandlerFunc {
 		shortURL := mux.Vars(r)["shortURL"]
 		resp, err := s.storage.FindInStore(context.Background(), shortURL, s.config)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusNotFound)
+			utils.HttpErrorWithoutBackSlashN(w, err.Error(), http.StatusNotFound)
 			s.logger.Info(err.Error())
 			return
 		}
@@ -65,36 +66,31 @@ func (s *APIServer) GetFullURL() http.HandlerFunc {
 	}
 }
 
-type request struct {
-	url *string `json:"url"`
-}
-
 func (s *APIServer) CreateURL() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		t := struct {
-			LongUrl *string `json:"longurl"` // pointer so we can test for field absence
+			LongUrl *string `json:"longUrl"` // pointer so we can test for field absence
 		}{}
 		d := json.NewDecoder(r.Body)
 		err := d.Decode(&t)
 		if err != nil {
-			// bad JSON or unrecognized json field
-			http.Error(w, err.Error(), http.StatusBadRequest)
+			utils.HttpErrorWithoutBackSlashN(w, err.Error(), http.StatusBadRequest)
 			s.logger.Error(err.Error())
 			return
 		}
 		if t.LongUrl == nil {
-			http.Error(w, "Missing field 'longUrl' from JSON object", http.StatusBadRequest)
+			utils.HttpErrorWithoutBackSlashN(w, "Missing field 'longUrl' from JSON object", http.StatusBadRequest)
 			s.logger.Error("Missing field 'longUrl' from JSON object")
 			return
 		}
 		if d.More() {
-			http.Error(w, "Extraneous data after JSON object", http.StatusBadRequest)
+			utils.HttpErrorWithoutBackSlashN(w, "Extraneous data after JSON object", http.StatusBadRequest)
 			s.logger.Error("Extraneous data after JSON object")
 			return
 		}
 		resp, err := s.storage.PostStore(context.Background(), *t.LongUrl, s.config)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
+			utils.HttpErrorWithoutBackSlashN(w, err.Error(), http.StatusBadRequest)
 			s.logger.Error(err.Error())
 			return
 		}

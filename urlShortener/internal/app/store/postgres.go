@@ -18,6 +18,10 @@ type Postgres struct {
 	pool *pgxpool.Pool
 }
 
+func (st *Postgres) Print() {
+	return
+}
+
 func (st *Postgres) FindInStore(ctx context.Context, shortURL string, config *config.Config) (string, error) {
 	var longURL string
 	q := `SELECT 

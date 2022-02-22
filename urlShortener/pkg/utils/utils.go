@@ -2,6 +2,8 @@ package utils
 
 import (
 	"github.com/sirupsen/logrus"
+	"io"
+	"net/http"
 	"time"
 )
 
@@ -18,4 +20,11 @@ func DoWithTries(fn func() error, attempts int, delay time.Duration) (err error)
 		return nil
 	}
 	return
+}
+
+func HttpErrorWithoutBackSlashN(w http.ResponseWriter, error string, code int) {
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	w.Header().Set("X-Content-Type-Options", "nosniff")
+	w.WriteHeader(code)
+	io.WriteString(w, error)
 }
