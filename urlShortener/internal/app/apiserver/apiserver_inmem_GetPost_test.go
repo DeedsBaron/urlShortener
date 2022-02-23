@@ -86,7 +86,9 @@ func TestAPIServerInMem_CreateURL_and_GetFullURL(t *testing.T) {
 		s.router.ServeHTTP(res, req)
 
 		fmt.Println(colors.Cyan+"Response body: "+colors.Res, res.Body.String())
-		Responses = append(Responses, ResponseURL{shortURL: res.Body.String()[len(res.Body.String())-10 : len(res.Body.String())]})
+		if len(res.Body.String()) >= 10 {
+			Responses = append(Responses, ResponseURL{shortURL: res.Body.String()[len(res.Body.String())-10 : len(res.Body.String())]})
+		}
 		fmt.Println(colors.Cyan+"Response code: "+colors.Res, res.Code)
 	}
 	fmt.Println(colors.Yellow + "Testing GET method \"GetFullURL\"" + colors.Res)

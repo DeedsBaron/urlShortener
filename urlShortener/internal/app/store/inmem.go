@@ -36,7 +36,7 @@ func checkIfLongURLAlreadyInMap(m1 map[uint64][]string, longURL string) string {
 func validateURL(longURL string) error {
 	_, err := url.ParseRequestURI(longURL)
 	if err != nil {
-		return err
+		return errors.New("Invalid URI for request")
 	}
 	return nil
 }

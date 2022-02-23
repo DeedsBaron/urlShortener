@@ -9,8 +9,8 @@ inmem:
 	@echo "\033[0;32mChanging SOLUTION value to 0 in .env file\033[m"
 	sed -i -e 's/SOLUTION=0/SOLUTION=0/g' .env
 	sed -i -e 's/SOLUTION=1/SOLUTION=0/g' .env
-	docker-compose build --no-cache
-	docker-compose up -d --force-recreate
+	docker-compose build --no-cache urlshortener
+	docker-compose up -d --force-recreate urlshortener
 
 psql: clean
 	@echo "\033[0;32mChanging SOLUTION value to 1 in .env file\033[m"
@@ -38,4 +38,4 @@ testall: test_inmem test_psql
 
 .PHONY: all build inmem psql clean re logs status test_inmem test_psql testall
 
-.DEFAULT_GOAL := all
+.DEFAULT_GOAL := inmem
