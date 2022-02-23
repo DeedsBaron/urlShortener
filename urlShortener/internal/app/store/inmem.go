@@ -24,13 +24,13 @@ func (st *InMemStorage) Print() {
 	fmt.Println(st.InMemStore)
 }
 
-func checkIfLongURLAlreadyInMap(m1 map[uint64][]string, longURL string) bool {
+func checkIfLongURLAlreadyInMap(m1 map[uint64][]string, longURL string) string {
 	for _, URL := range m1 {
 		if URL[0] == longURL {
-			return true
+			return URL[1]
 		}
 	}
-	return false
+	return ""
 }
 
 func validateURL(longURL string) error {
@@ -51,8 +51,8 @@ func (st *InMemStorage) FindInStore(ctx context.Context, shortURL string, config
 }
 
 func (st *InMemStorage) PostStore(ctx context.Context, longURL string, config *config.Config) (string, error) {
-	if checkIfLongURLAlreadyInMap(st.InMemStore, longURL) == true {
-		return "", errors.New("URL is already in base")
+	if shortURL := checkIfLongURLAlreadyInMap(st.InMemStore, longURL); shortURL != "" {
+		return "longURL is already in base " + shortURL, nil
 	}
 	if err := validateURL(longURL); err != nil {
 		return "", err

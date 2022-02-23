@@ -2,7 +2,6 @@ package store
 
 import (
 	"context"
-	"fmt"
 	"github.com/sirupsen/logrus"
 	"log"
 	"shortener/internal/app/config"
@@ -21,7 +20,6 @@ type Storage interface {
 func InitStorage(config *config.Config) Storage {
 	var err error
 	var newStorage Storage
-	fmt.Println("type = ", config.Type)
 	if config.Type == 0 {
 		newStorage = NewInMemStorage()
 	} else if config.Type == 1 {

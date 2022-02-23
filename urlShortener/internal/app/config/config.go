@@ -2,7 +2,6 @@ package config
 
 import (
 	"flag"
-	"fmt"
 	"github.com/BurntSushi/toml"
 	"log"
 )
@@ -54,6 +53,5 @@ func NewConfig() (*Config, error) {
 	} else {
 		log.Fatal("Wrong memory flag, try -help")
 	}
-	fmt.Println(config)
 	return config, nil
 }

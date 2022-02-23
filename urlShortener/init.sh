@@ -4,6 +4,3 @@ if [[ $SOLUTION == 0 ]]; then
 elif [[ $SOLUTION == 1 ]]; then
   ./urlShortener -mem psql
 fi
-while :
-do
-done

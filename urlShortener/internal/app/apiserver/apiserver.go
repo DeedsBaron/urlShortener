@@ -74,7 +74,7 @@ func (s *APIServer) CreateURL() http.HandlerFunc {
 		d := json.NewDecoder(r.Body)
 		err := d.Decode(&t)
 		if err != nil {
-			utils.HttpErrorWithoutBackSlashN(w, err.Error(), http.StatusBadRequest)
+			utils.HttpErrorWithoutBackSlashN(w, err.Error(), http.StatusBadRequest) //this func is needed for beautiful tests output
 			s.logger.Error(err.Error())
 			return
 		}

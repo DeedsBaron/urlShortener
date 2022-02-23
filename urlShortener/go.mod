@@ -4,13 +4,13 @@ go 1.17
 
 require (
 	github.com/BurntSushi/toml v1.0.0
+	github.com/DeedsBaron/colors v0.0.0-20220210132330-956eeb497f6a
 	github.com/gorilla/mux v1.8.0
 	github.com/jackc/pgx/v4 v4.15.0
 	github.com/sirupsen/logrus v1.8.1
 )
 
 require (
-	github.com/DeedsBaron/colors v0.0.0-20220210132330-956eeb497f6a // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgconn v1.11.0 // indirect
 	github.com/jackc/pgio v1.0.0 // indirect

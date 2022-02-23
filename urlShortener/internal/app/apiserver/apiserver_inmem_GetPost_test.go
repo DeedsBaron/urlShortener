@@ -16,10 +16,6 @@ import (
 	"testing"
 )
 
-type ResponseURL struct {
-	shortURL string
-}
-
 func init() {
 	var _ = func() bool {
 		testing.Init()
@@ -35,9 +31,10 @@ func init() {
 	}
 }
 
-var Config *config.Config
-
 func TestAPIServerInMem_CreateURL_and_GetFullURL(t *testing.T) {
+	type ResponseURL struct {
+		shortURL string
+	}
 	var Responses []ResponseURL
 	fmt.Println(colors.Green + "Inmem solution tests" + colors.Res)
 	tests := []struct {
@@ -68,21 +65,22 @@ func TestAPIServerInMem_CreateURL_and_GetFullURL(t *testing.T) {
 			testDescription: colors.Purple + "TEST5: URL is already in base" + colors.Res,
 			testElem:        []byte(`{"longUrl": "https://www.google.com/"}`),
 		},
+		{
+			testDescription: colors.Purple + "TEST6: Not valid URL" + colors.Res,
+			testElem:        []byte(`{"longUrl": "424242424424"}`),
+		},
 	}
-	Config, err := config.NewConfig()
+	config, err := config.NewConfig()
 	if err != nil {
 		log.Fatal(err)
 	}
-	s := New(Config)
+	s := New(config)
 	fmt.Println(colors.Yellow + "Testing POST method \"CreateURL\"")
 	s.logger.SetLevel(logrus.FatalLevel)
 	for _, val := range tests {
 		res := httptest.NewRecorder()
 		fmt.Println(val.testDescription)
 		fmt.Println(colors.Cyan+"Post req body: "+colors.Res, string(val.testElem))
-		if err != nil {
-			log.Fatal(err)
-		}
 		req, _ := http.NewRequest(http.MethodPost, "/encode/", bytes.NewBuffer(val.testElem))
 		s.configureRouter()
 		s.router.ServeHTTP(res, req)
@@ -93,8 +91,11 @@ func TestAPIServerInMem_CreateURL_and_GetFullURL(t *testing.T) {
 	}
 	fmt.Println(colors.Yellow + "Testing GET method \"GetFullURL\"" + colors.Res)
 	for i, val := range Responses {
+		if i == 3 {
+			break
+		}
 		fmt.Println(colors.Purple + "TEST" + strconv.Itoa(i) + ": ")
-		fmt.Println(colors.Cyan + "Get req: " + colors.Res + "\t" + Config.Options.Schema + "//" + Config.Options.Prefix + "/" + val.shortURL)
+		fmt.Println(colors.Cyan + "Get req: " + colors.Res + "\t" + config.Options.Schema + "//" + config.Options.Prefix + "/" + val.shortURL)
 		res := httptest.NewRecorder()
 		req, _ := http.NewRequest(http.MethodGet, "/"+val.shortURL, nil)
 		s.router.ServeHTTP(res, req)

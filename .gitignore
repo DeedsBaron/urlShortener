@@ -3,3 +3,4 @@
 **/.idea
 **/*.dSYM
 **/.DS_Store
+.gitignore

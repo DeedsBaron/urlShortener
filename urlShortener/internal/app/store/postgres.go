@@ -44,25 +44,26 @@ type Row struct {
 	shortURL string
 }
 
-func (st *Postgres) PostStore(ctx context.Context, longURL string, config *config.Config) (shortURL string, err error) {
+func (st *Postgres) PostStore(ctx context.Context, longURL string, config *config.Config) (string, error) {
 	if err := validateURL(longURL); err != nil {
 		return "", err
 	}
 	q := `INSERT INTO urls (id, longURL, shortURL) VALUES ($1, $2, $3);`
 	for {
 		id := randgen.Generate()
-		shortURL = config.Options.Schema + "://" + config.Options.Prefix + "/" + encoder.Encode(id)
+		shortURL := config.Options.Schema + "://" + config.Options.Prefix + "/" + encoder.Encode(id)
+
 		_, err := st.pool.Exec(context.Background(), q, id, longURL, shortURL)
 		if err != nil {
-			fmt.Println(err.Error())
+
 			if strings.Contains(err.Error(), "urls_longurl_key") == true {
 				return "", errors.New("URL is already in base")
 			} else if strings.Contains(err.Error(), "urls_pkey") == true {
-				fmt.Println("Here")
 				continue
 			} else {
 				return "", err
 			}
+
 		} else {
 			return shortURL, nil
 		}
