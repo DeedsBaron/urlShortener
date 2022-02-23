@@ -5,10 +5,8 @@
 # Сервис принимает следующие запросы по http:
 1. Метод `POST`, который сохраняет оригинальный URL в базе и возврает сокращённый
 ----
-* **URL**
-  /encode/
-*  **URL Params**
-  None 
+* **URL**: /encode/
+*  **URL Params**: None 
 * **Data Params**
    **Required:**
    ```json
@@ -41,4 +39,17 @@
   
    * **Code:** 400 BAD REQUEST <br />
     **Content:** `{"Invalid URI for request"}`
-3. Метод Get, который будет принимать сокращённый URL и возвращать оригинальный URL
+2. Метод Get, который принимает сокращённый URL и выполняет редирект на оригинальный URL
+* **URL**: /укороченная_ссылка
+*  **URL Params**: None
+* **Data Params**
+   **Required:** None
+   
+* **Success Response:**
+  * **Code:** 303 SEE OTHER <br />
+    **Content:** `{"<a href="исходная ссылка">See Other</a>."}`
+    
+* **Error Response:**
+  * **Code:** 404 NOT FOUND <br />
+    **Content:** `{"short URL doesn't exist in base"}`
+    
