@@ -1,4 +1,4 @@
-# urlShortener
+# :heavy_check_mark: urlShortener
 **urlShortner** - сервис, который предоставляет API по созданию сокращённых ссылок следующего формата:
 - Сокращенная ссылка состоит из 10 символов
 - Cимволы состоят из латинского алфавита в нижнем и верхнем регистре, цифр и символа '_'
@@ -74,5 +74,7 @@
 Выполняются все тесты
 
     make testall
-
+## Other
+**Author:**  
+:vampire:*[Deeds Baron](https://github.com/DeedsBaron)*  
 
